@@ -1,6 +1,8 @@
-import styles from "./page.module.css"
+import styles from "../page.module.css"
+// server-side component
+
+export default function LoginPage() {
 
 
-export default function LoginPage(): {
 
 }
