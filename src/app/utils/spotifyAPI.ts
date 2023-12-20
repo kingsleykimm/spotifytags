@@ -3,6 +3,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import axios from "axios";
 
+interface Track {
+    track_name : string,
+    artist : string,
+    album : string,
+}
 
 export async function SongSearch (song_name : string)  {
     const session = await getServerSession(authOptions)
@@ -29,11 +34,20 @@ export async function SongSearch (song_name : string)  {
     )
     // what information would we need for each track?
     // song_name, artist_name, genres, album, 
-    console.log(data)
+
     let trackObjects  = data.tracks.items
-    console.log(trackObjects[0])
-    let trackObjectsFiltered = trackObjects.map((cur) => {cur.name, cur.artists[0].name, cur.album })
-    console.log(trackObjectsFiltered)
+
+    let trackObjectsFiltered : Track[] = []
+    // let trackObjectsFiltered = trackObjects.map((cur) => {cur.name, cur.artists[0].name, cur.album.name})
+    for(let i = 0; i < trackObjects.length; i++) {
+        let track : any = trackObjects[i]
+        let new_track : Track = {
+            track_name : track.name,
+            artist: track.artists[0].name,
+            album: track.album.name,
+        }
+        trackObjectsFiltered.push(new_track)
+    }
     return trackObjectsFiltered
     }
 
