@@ -60,4 +60,3 @@ export async function SongSearch (song_name : string)  {
     }
 }
 
-SongSearch("Sugar")
