@@ -1,4 +1,5 @@
 import styles from "../page.module.css"
+
 // server-side component
 "use client"
 import { useSession, signIn, signOut } from "next-auth/react"
