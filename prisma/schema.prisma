@@ -10,18 +10,25 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Post {
+model Song {
+  id Int @id @default(autoincrement())
+  tag Tag? @relation(fields: [tagId], references: [id])
+  tagId Int?
+  song_id String 
+}
+
+model Tag {
   id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
+  tag_name String
   author    User?   @relation(fields: [authorId], references: [id])
-  authorId  Int?
+  authorId Int?
+  songs Song[]
 }
 
 model User {
   id    Int     @id @default(autoincrement())
   email String  @unique
   name  String?
-  posts Post[]
+  spotify_id String
+  tags Tag[]
 }
