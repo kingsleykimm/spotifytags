@@ -12,9 +12,8 @@ generator client {
 
 model Song {
   id Int @id @default(autoincrement())
-  tag Tag? @relation(fields: [tagId], references: [id])
-  tagId Int?
-  song_id String 
+  track_id String 
+  tags TagsOnSongs[]
 }
 
 model Tag {
@@ -22,9 +21,17 @@ model Tag {
   tag_name String
   author    User?   @relation(fields: [authorId], references: [id])
   authorId Int?
-  songs Song[]
+  songs TagsOnSongs[]
 }
 
+model TagsOnSongs {
+  song Song @relation(fields: [song_id], references: [id])
+  song_id Int
+  tag Tag @relation(fields: [tag_id], references: [id])
+  tag_id Int
+  assignedAt DateTime @default(now())
+  @@id([song_id, tag_id])
+}
 model User {
   id    Int     @id @default(autoincrement())
   email String  @unique

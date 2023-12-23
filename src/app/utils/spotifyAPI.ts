@@ -60,3 +60,7 @@ export async function SongSearch (song_name : string)  {
     }
 }
 
+
+export async function createPlaylistFromSongs() {
+    
+}
