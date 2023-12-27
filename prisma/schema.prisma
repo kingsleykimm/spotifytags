@@ -12,13 +12,14 @@ generator client {
 
 model Song {
   id Int @id @default(autoincrement())
-  track_id String 
+  track_id String?
+  song_name String 
   tags TagsOnSongs[]
 }
 
 model Tag {
   id        Int     @id @default(autoincrement())
-  tag_name String
+  tag_name  String  @unique
   author    User?   @relation(fields: [authorId], references: [id])
   authorId Int?
   songs TagsOnSongs[]
