@@ -19,13 +19,10 @@ export async function createUser(
 export async function createTag(
     user_email : string, tag_name : string
 )  {
-    const user : object | null  = prisma.user.findUnique({
+    const user = prisma.user.findUnique({
         where: {
             email: user_email,
         },
-        select: {
-            id: true,
-        }
     })
     const tag = await prisma.tag.create({
         data: {
@@ -42,7 +39,7 @@ export async function createTag(
     export async function addTagToSong (song_name: string, tagname: string, user_email:  string) {
     
     // get tag first, using tag_name. If tag doesn't exist create one
-    let tag : object | null = await prisma.tag.findUnique({
+    let tag = await prisma.tag.findUnique({
       where : {
         tag_name: tagname,
       }
@@ -52,8 +49,13 @@ export async function createTag(
        // use createTag here 
     }
     // create song, then add tag to song and vice versa
-    const song = await prisma.song.create({
+    const song = await addSong(song_name)
+    const updateTag = await prisma.tagsOnSongs.create({
         data: {
+            song_id: song.id,
+            tag_id: tag?.id, 
+            assignedAt: new Date(),
+
 
         }
     })
@@ -81,4 +83,5 @@ export async function addSong (name : string) {
             song_name: name,
         }
     })
+    return song
 }
