@@ -23,6 +23,9 @@ export async function createTag(
         where: {
             email: user_email,
         },
+        select : {
+            id: true,
+        }
     })
     const tag = await prisma.tag.create({
         data: {
@@ -30,6 +33,7 @@ export async function createTag(
             authorId: user.id,
         }
     })
+    return tag;
 }
     // get user from user_email
     // get song id from song name, assign it to this gag
@@ -45,20 +49,22 @@ export async function createTag(
       }
     })
     if(tag == null) {
-        createTag(user_email, tagname);
+        tag = createTag(user_email, tagname);
        // use createTag here 
     }
-    // create song, then add tag to song and vice versa
-    const song = await addSong(song_name)
-    const updateTag = await prisma.tagsOnSongs.create({
-        data: {
-            song_id: song.id,
-            tag_id: tag?.id, 
-            assignedAt: new Date(),
-
-
+    tag = await prisma.tag.update({
+        where :{
+            id: tag?.id,
+        },
+        data : {
+            songs: {
+                create: [
+                    { song: { create : {song_name: song_name }} }
+                ]
+            }
         }
     })
+    // create song, then add tag to song and vice versa
  //To-do
 }
 export async function deleteTag(name : string) {
@@ -69,7 +75,20 @@ export async function deleteTag(name : string) {
     })
 }
 
-export async function editTag() {
+export async function editTag(old_tag : string, new_tag : string) {
+    const tag = await prisma.tag.findUnique({
+        where: {
+            tag_name : old_tag,
+        }
+    })
+    const newTag = await prisma.tag.update({
+        where: {
+            id: tag?.id,
+        },
+        data : {
+            tag_name : new_tag
+        }
+    })
 
 }
 

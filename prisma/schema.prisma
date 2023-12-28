@@ -30,7 +30,6 @@ model TagsOnSongs {
   song_id Int
   tag Tag @relation(fields: [tag_id], references: [id])
   tag_id Int
-  assignedAt DateTime @default(now())
   @@id([song_id, tag_id])
 }
 model User {
