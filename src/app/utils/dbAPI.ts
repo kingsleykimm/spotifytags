@@ -19,21 +19,19 @@ export async function createUser(
 export async function createTag(
     user_email : string, tag_name : string
 )  {
-    const user = prisma.user.findUnique({
+    const user = prisma.user.update({
         where: {
-            email: user_email,
+            email : user_email,
         },
-        select : {
-            id: true,
-        }
-    })
-    const tag = await prisma.tag.create({
         data: {
-            tag_name: tag_name,
-            authorId: user.id,
+            tags: {
+                create: [
+                    {tag_name: tag_name}
+                ]
+            }
         }
     })
-    return tag;
+
 }
     // get user from user_email
     // get song id from song name, assign it to this gag
@@ -97,7 +95,7 @@ export async function getSongsWithTag() {
 }
 export async function addSong (name : string) {
     //To-do , adds song to database
-    const song = await prisma.user.create({
+    const song = await prisma.song.create({
         data : {
             song_name: name,
         }

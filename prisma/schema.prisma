@@ -20,8 +20,8 @@ model Song {
 model Tag {
   id        Int     @id @default(autoincrement())
   tag_name  String  @unique
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId Int?
+  author    User  @relation(fields: [authorId], references: [id])
+  authorId Int
   songs TagsOnSongs[]
 }
 
