@@ -19,46 +19,50 @@ export async function createUser(
 export async function createTag(
     user_email : string, tag_name : string
 )  {
-    const user : object | null  = prisma.user.findUnique({
+    const user = prisma.user.update({
         where: {
-            email: user_email,
+            email : user_email,
         },
-        select: {
-            id: true,
-        }
-    })
-    const tag = await prisma.tag.create({
         data: {
-            tag_name: tag_name,
-            authorId: user.id,
+            tags: {
+                create: [
+                    {tag_name: tag_name}
+                ]
+            }
         }
     })
+
 }
     // get user from user_email
     // get song id from song name, assign it to this gag
     // create Tag
 
 
-    export async function addTagToSong (song_name: string, tagname: string, user_email:  string) {
+export async function addTagToSong (song_name: string, tagname: string, user_email:  string) {
     
     // get tag first, using tag_name. If tag doesn't exist create one
-    let tag : object | null = await prisma.tag.findUnique({
+    let tag = await prisma.tag.findUnique({
       where : {
         tag_name: tagname,
       }
     })
-    if(tag == null) {
-        createTag(user_email, tagname);
-       // use createTag here 
-    }
-    // create song, then add tag to song and vice versa
-    const song = await prisma.song.create({
-        data: {
 
+    tag = await prisma.tag.update({
+        where :{
+            id: tag?.id,
+        },
+        data : {
+            songs: {
+                create: [
+                    { song: { create : {song_name: song_name }} }
+                ]
+            }
         }
     })
+    // create song, then add tag to song and vice versa
  //To-do
 }
+
 export async function deleteTag(name : string) {
     const deleteTag = await prisma.tag.delete ({
         where: {
@@ -67,18 +71,53 @@ export async function deleteTag(name : string) {
     })
 }
 
-export async function editTag() {
+export async function editTag(old_tag : string, new_tag : string) {
+    const tag = await prisma.tag.findUnique({
+        where: {
+            tag_name : old_tag,
+        }
+    })
+    const newTag = await prisma.tag.update({
+        where: {
+            id: tag?.id,
+        },
+        data : {
+            tag_name : new_tag
+        }
+    })
 
 }
 
-export async function getSongsWithTag() {
-
+export async function getAllTagsWithUser(user_email : string) {
+    const user = await prisma.user.findUnique({
+        where: {
+            email: user_email,
+        }
+    })
+    const tags = await prisma.tag.findMany({
+        where: {
+            authorId: user?.id,
+        }
+    })
+    return tags;
+}
+export async function getSongsWithTag(tag_name : string) {
+    const getSongs = await prisma.tag.findMany({
+        where: {
+            tag_name: tag_name,
+        },
+        include: {
+            songs: true,
+        }
+    })
+    return getSongs[0].songs;
 }
 export async function addSong (name : string) {
     //To-do , adds song to database
-    const song = await prisma.user.create({
+    const song = await prisma.song.create({
         data : {
             song_name: name,
         }
     })
+    return song
 }
